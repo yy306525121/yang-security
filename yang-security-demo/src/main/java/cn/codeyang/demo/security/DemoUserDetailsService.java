@@ -22,12 +22,22 @@ public class DemoUserDetailsService implements UserDetailsService, SocialUserDet
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("表单登陆用户名 {}", username);
-        return new User("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+        if ("yangzhongyang".equals(username)) {
+            return new User("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+        } else if ("yy306525121".equals(username)){
+            return new User("yy306525121", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+        }
+        return null;
     }
 
     @Override
     public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
         log.info("社交登陆用户名Id userId:{}", userId);
-        return new SocialUser("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+        if ("yangzhongyang".equals(userId)) {
+            return new SocialUser("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+        } else if ("yy306525121".equals(userId)){
+            return new SocialUser("yy306525121", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+        }
+        return null;
     }
 }
