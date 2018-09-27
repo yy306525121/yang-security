@@ -1,0 +1,36 @@
+
+AbstractAuthenticationProcessingFilter.doFilter
+  -->attemptAuthentication(request, response);
+    -->UsernamePasswordAuthenticationFilter.attemptAuthentication
+      -->this.getAuthenticationManager().authenticate(authRequest);
+        -->ProviderManager.authenticate
+          -->parent.authenticate(authentication);
+            -->ProviderManager.authenticate
+              -->provider.authenticate(authentication);
+                -->AbstractUserDetailsAuthenticationProvider.authenticate
+                  -->createSuccessAuthentication(principalToReturn, authentication, user);
+  -->successfulAuthentication(request, response, chain, authResult);
+    -->AbstractAuthenticationProcessingFilter.successfulAuthentication
+      -->rememberMeServices.loginSuccess(request, response, authResult);
+        -->AbstractRememberMeServices.loginSuccess
+          -->onLoginSuccess(request, response, successfulAuthentication);  //开始处理登陆成功
+            -->new PersistentRememberMeToken(username, generateSeriesData(), generateTokenData(), new Date())  //创建数据库
+            -->tokenRepository.createNewToken(persistentToken); //调用tokenRepository将生成的token存入数据库
+            -->addCookie(persistentToken, request, response);  //将token写入cookie
+
+//记住我之后的登录处理
+RememberMeAuthenticationFilter.doFilter
+  -->rememberMeServices.autoLogin(request, response); //判断SecurityContextHolder.getContext().getAuthentication()==null 如果前面的处理器没有处理过登陆请求， 将调用rememberMe
+    -->AbstractRememberMeServices.autoLogin
+      -->extractRememberMeCookie(request);
+        -->return cookie.getValue();  //返回cookie中cookie name为remember-me的值
+      -->decodeCookie(rememberMeCookie);
+      -->processAutoLoginCookie(cookieTokens, request, response);
+        -->tokenRepository.getTokenForSeries(presentedSeries);
+        -->token.getDate().getTime() + getTokenValiditySeconds() * 1000L < System.currentTimeMillis()  //判断token是否过期
+        -->tokenRepository.updateToken(newToken.getSeries(), newToken.getTokenValue(),newToken.getDate()); //更新token
+        -->addCookie(newToken, request, response); //重新设置cookie
+        -->getUserDetailsService().loadUserByUsername(token.getUsername());
+      -->createSuccessfulAuthentication(request, user);
+  -->authenticationManager.authenticate(rememberMeAuth);
+  -->onSuccessfulAuthentication(request, response, rememberMeAuth);

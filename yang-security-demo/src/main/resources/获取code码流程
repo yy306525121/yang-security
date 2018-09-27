@@ -1,0 +1,31 @@
+AuthorizationEndpoint.authorize
+  -->getOAuth2RequestFactory().createAuthorizationRequest(parameters);
+    -->DefaultOAuth2RequestFactory.createAuthorizationRequest
+      -->new AuthorizationRequest  //使用clientId, response_type, redirect_uri,scope封装成一个AuthorizationRequest
+      -->clientDetailsService.loadClientByClientId(clientId); //加载clientDetails
+      -->request.setResourceIdsAndAuthoritiesFromClientDetails(clientDetails); //将clientDetails的resourceId和Authorities设置到AuthorizationRequest中
+  -->getClientDetailsService().loadClientByClientId(authorizationRequest.getClientId()); //再次获取clientDetails
+  -->userApprovalHandler.checkForPreApproval(authorizationRequest,(Authentication) principal);
+    -->approvalStore.getApprovals(userAuthentication.getName(), clientId);
+  -->userApprovalHandler.isApproved(authorizationRequest, (Authentication) principal);   //return false
+  -->authorizationRequest.setApproved(approved); //设置 Approved 为 false
+  -->model.put("authorizationRequest", authorizationRequest);
+  -->getUserApprovalPageResponse(model, authorizationRequest, (Authentication) principal); //向页面发送Approve确认请求
+
+//点击Approve之后进入这里
+AuthorizationEndpoint.approveOrDeny
+  -->(AuthorizationRequest) model.get("authorizationRequest");  //拿到authorizationRequest参数
+  -->userApprovalHandler.updateAfterApproval(authorizationRequest,(Authentication) principal);
+    -->approvalStore.addApprovals(approvals); //将Approve信息存入approvalStore
+    -->authorizationRequest.setApproved(approved); //设置approved = true
+  -->getAuthorizationCodeResponse(authorizationRequest, (Authentication) principal);
+    -->return new RedirectView(getSuccessfulRedirect(authorizationRequest,generateCode(authorizationRequest, authUser)), false, true, false);
+      -->generateCode(AuthorizationRequest authorizationRequest, Authentication authentication)
+        -->getOAuth2RequestFactory().createOAuth2Request(authorizationRequest);
+          -->DefaultOAuth2RequestFactory.createOAuth2Request
+            -->request.createOAuth2Request();
+              -->AuthorizationRequest.createOAuth2Request
+                -->new OAuth2Request(getRequestParameters(), getClientId(), getAuthorities(), isApproved(), getScope(), getResourceIds(), getRedirectUri(), getResponseTypes(), getExtensions());
+        -->new OAuth2Authentication(storedOAuth2Request, authentication); //创建OAuth2Authentication
+        -->authorizationCodeServices.createAuthorizationCode(OAuth2Authentication);  //生成code
+      -->AuthorizationEndpoint.getSuccessfulRedirect

@@ -1,0 +1,18 @@
+
+    UsernamePasswordAuthenticationFilter.attemptAuthentication
+      -->new UsernamePasswordAuthenticationToken(username, password) //   封装临时usernamePasswordAuthenticationToken， 只包含用户名密码，不包含权限。。。
+      -->ProviderManager.authenticate(authentication)
+        -->parent.authenticate(authentication);
+          -->ProviderManager.authenticate(authenticatio)
+            -->provider.authenticate(authentication);
+              -->AbstractUserDetailsAuthenticationProvider.authenticate(authentication)
+                -->retrieveUser(username, (UsernamePasswordAuthenticationToken) authentication);
+                  -->this.getUserDetailsService().loadUserByUsername(username); //调用UserDetailsService获取用户
+                -->preAuthenticationChecks.check(user); //检查用户的AccountNonLocked, isEnabled, isAccountNonExpired状态
+                -->additionalAuthenticationChecks(user, (UsernamePasswordAuthenticationToken) authentication); //检查用户的密码
+                -->postAuthenticationChecks.check(user); //检查用户的CredentialsNonExpired状态
+                -->createSuccessAuthentication(principalToReturn, authentication, user);
+                  -->new UsernamePasswordAuthenticationToken(principal, authentication.getCredentials(),authoritiesMapper.mapAuthorities(user.getAuthorities()));  //重新创建UsernamePasswordAuthenticationToken
+-->AbstractAuthenticationProcessingFilter.successfulAuthentication(request, response, chain, authResult);
+  -->SecurityContextHolder.getContext().setAuthentication(authResult);  //将认证成功的authentication放入SecurityContext， 再放入SecurityContextHolder中
+  -->successHandler.onAuthenticationSuccess(request, response, authResult);  //调用自定义登陆成功处理器

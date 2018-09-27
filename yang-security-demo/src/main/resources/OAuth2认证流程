@@ -1,0 +1,39 @@
+TokenEndpoint.postAccessToken
+      -->getClientDetailsService().loadClientByClientId(clientId); //获取client信息
+  -->getOAuth2RequestFactory().createTokenRequest(parameters, authenticatedClient); //创建TokenRequest
+  -->getTokenGranter().grant(tokenRequest.getGrantType(), tokenRequest); //获取OAuth2AccessToken
+    -->AuthorizationServerEndpointsConfigurer.tokenGranter().grant(String grantType, TokenRequest tokenRequest)
+        -->delegate = new CompositeTokenGranter(getDefaultTokenGranters());
+          -->AuthorizationServerEndpointsConfigurer.getDefaultTokenGranters()
+        -->delegate.grant(grantType, tokenRequest);
+          -->CompositeTokenGranter.grant
+            -->granter.grant(grantType, tokenRequest);
+              -->AbstractTokenGranter.grant //
+                -->clientDetailsService.loadClientByClientId(clientId); //重新获取一遍client
+                -->getAccessToken(client, tokenRequest);
+                  -->tokenServices.createAccessToken(getOAuth2Authentication(client, tokenRequest));
+                    -->ResourceOwnerPasswordTokenGranter.getOAuth2Authentication
+                      -->new UsernamePasswordAuthenticationToken(username, password); //创建Authentication
+                      -->((AbstractAuthenticationToken) userAuth).setDetails(parameters);
+                      -->authenticationManager.authenticate(userAuth);
+                        -->ProviderManager.authenticate //根据用户名密码获取Authentication  步骤同认证流程
+                      -->getRequestFactory().createOAuth2Request(client, tokenRequest);	 //创建OAuth2Request
+                      -->new OAuth2Authentication(storedOAuth2Request, userAuth);
+                  -->DefaultTokenServices.createAccessToken
+                    -->tokenStore.getAccessToken(authentication);
+                      -->String key = authenticationKeyGenerator.extractKey(authentication);
+                        -->generateKey(values) // 对用户名密码和scope进行MD5加密
+                      -->authenticationToAccessTokenStore.get(key);
+                    -->refreshToken = createRefreshToken(authentication);
+                      -->DefaultTokenServices.createRefreshToken
+                        -->getRefreshTokenValiditySeconds(authentication.getOAuth2Request()); //获取refresh过期时间，  默认60 * 60 * 24 * 30   30天
+                        -->String value = UUID.randomUUID().toString();
+                        -->new DefaultExpiringOAuth2RefreshToken(value, new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
+                      -->createAccessToken(authentication, refreshToken);
+                        -->DefaultTokenServices.createAccessToken
+                          -->new DefaultOAuth2AccessToken(UUID.randomUUID().toString());
+                          -->getAccessTokenValiditySeconds(authentication.getOAuth2Request());  //获取access_token过期时间， 默认12小时
+                          -->return accessTokenEnhancer.enhance(token, authentication)
+                        -->tokenStore.storeAccessToken(accessToken, authentication);
+                        -->tokenStore.storeAccessToken(accessToken, authentication);
+  getResponse(token); //将token写入response
