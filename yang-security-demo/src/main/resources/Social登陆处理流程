@@ -1,0 +1,75 @@
+========================================================================获取授权码之前========================================================================================================
+
+AbstractAuthenticationProcessingFilter.attemptAuthentication(request, response)
+  -->SocialAuthenticationFilter.attemptAuthentication
+    -->authServiceLocator.registeredAuthenticationProviderIds(); //获取所有的provider
+    -->getRequestedProviderId(request); //获取路径中传入的providerId  /login/github中的github
+    -->authServiceLocator.getAuthenticationService(authProviderId); //拿到OAuth2AuthenticationService
+      --> return authService
+    -->attemptAuthService(authService, request, response);
+      -->authService.getAuthToken(request, response);
+        -->OAuth2AuthenticationService.getAuthToken
+          -->request.getParameter("code"); //获取请求参数中的code
+            -->throw new SocialAuthenticationRedirectException(getConnectionFactory().getOAuthOperations().buildAuthenticateUrl(params)); //code为空时抛出异常
+  -->unsuccessfulAuthentication(request, response, failed);
+      -->SecurityContextHolder.clearContext(); 清空SecurityContextHolder
+      -->rememberMeServices.loginFail(request, response);
+        -->AbstractRememberMeServices.loginFail()
+          -->cancelCookie(request, response);  //清除cookie
+          -->onLoginFail(request, response);  //子类如果实现的话就执行
+      -->failureHandler.onAuthenticationFailure(request, response, failed);
+        -->SocialAuthenticationFailureHandler.onAuthenticationFailure
+          -->response.sendRedirect(((SocialAuthenticationRedirectException) failed).getRedirectUrl());  //重定向到获取授权码的连接
+          -->return
+
+========================================================================获取授权码之后========================================================================================================
+AbstractAuthenticationProcessingFilter.attemptAuthentication
+  -->SocialAuthenticationFilter.attemptAuthentication
+    -->authServiceLocator.registeredAuthenticationProviderIds() //获取所有的provider
+    -->getRequestedProviderId(request); //从请求中获取providerId
+    -->authServiceLocator.getAuthenticationService(authProviderId);// 拿到对应的OAuth2AuthenticationService
+    -->attemptAuthService(authService, request, response);
+      -->authService.getAuthToken(request, response);
+        -->OAuth2AuthenticationService.getAuthToken
+          -->request.getParameter("code"); //获取请求参数中的code
+          -->buildReturnToUrl(request); // http://localhost:8080/login/github
+          -->getConnectionFactory().getOAuthOperations().exchangeForAccess(code, returnToUrl, null);
+            -->getConnectionFactory() // return GitHubConnectionFactory
+            -->getOAuthOperations()
+              -->getOAuth2ServiceProvider().getOAuthOperations();
+                -->(OAuth2ServiceProvider<S>) getServiceProvider(); //return GitHubOAuth2Template
+            -->OAuth2Template.exchangeForAccess()
+              -->postForAccessGrant(accessTokenUrl, params);
+                -->GitHubOAuth2Template.postForAccessGrant(accessTokenUrl,parameters)
+                  -->getRestTemplate().postForObject(accessTokenUrl, parameters, String.class); //获取token
+                  -->return new AccessGrant(accessToken, scope, null, null);
+          -->getConnectionFactory().createConnection(accessGrant);
+            -->getConnectionFactory()  // return GitHubConnectionFactory
+            -->createConnection(AccessGrant accessGrant)
+              -->return new OAuth2Connection<S>(getProviderId(), extractProviderUserId(accessGrant), accessGrant.getAccessToken(), accessGrant.getRefreshToken(), accessGrant.getExpireTime(), getOAuth2ServiceProvider(), getApiAdapter());
+          -->new SocialAuthenticationToken(connection, null);
+      -->getAuthentication();
+        -->SecurityContextHolder.getContext().getAuthentication();  //return null
+          --> return doAuthentication(authService, request, token);
+            -->token.setDetails(authenticationDetailsSource.buildDetails(request));
+            -->getAuthenticationManager().authenticate(token); //调用authenticationManager
+              -->ProviderManager.authenticate
+                -->SocialAuthenticationProvider.authenticate
+                  --> toUserId(connection);
+                    -->usersConnectionRepository.findUserIdsWithConnection(connection);
+                      -->JdbcUsersConnectionRepository.findUserIdsWithConnection
+                        -->jdbcTemplate.queryForList("select userId from " + tablePrefix + "UserConnection where providerId = ? and providerUserId = ?", String.class, key.getProviderId(), key.getProviderUserId()); //查询UserConnection表中是否有对应的第三方绑定数据
+                          //如果查询不到数据并且connectionSignUp 不为空就自动执行 connectionSignUp.execute(connection); 否则抛BadCredentialsException异常, 交给SocialAuthenticationFilter的doAuthentication捕获， 然后跳转到signUpUrl
+                  -->userDetailsService.loadUserByUserId(userId);
+                  -->return new SocialAuthenticationToken(connection, userDetails, authToken.getProviderAccountData(), getAuthorities(providerId, userDetails));
+            -->updateConnections(authService, token, success);
+              -->repo.updateConnection(connection);
+                -->JdbcConnectionRepository.updateConnection()
+-->sessionStrategy.onAuthentication(authResult, request, response); //存入session
+-->successfulAuthentication(request, response, chain, authResult);
+
+
+
+
+
+
