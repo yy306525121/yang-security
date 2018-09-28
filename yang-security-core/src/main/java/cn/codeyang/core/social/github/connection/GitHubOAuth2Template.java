@@ -21,7 +21,6 @@ public class GitHubOAuth2Template extends OAuth2Template {
     @Override
     protected AccessGrant postForAccessGrant(String accessTokenUrl, MultiValueMap<String, String> parameters) {
         String responseStr = getRestTemplate().postForObject(accessTokenUrl, parameters, String.class);
-        //getRestTemplate().getForObject(accessTokenUrl, String.class);
         log.info("accessToken response: {}", responseStr);
 
         String[] items = StringUtils.splitByWholeSeparatorPreserveAllTokens(responseStr, "&");
@@ -30,7 +29,7 @@ public class GitHubOAuth2Template extends OAuth2Template {
         String scope = StringUtils.substringAfterLast(items[1], "=");
         String tokenType = StringUtils.substringAfterLast(items[2], "=");
 
-        return new AccessGrant(accessToken, null, null, null);
+        return new AccessGrant(accessToken, scope, null, null);
     }
 
     @Override

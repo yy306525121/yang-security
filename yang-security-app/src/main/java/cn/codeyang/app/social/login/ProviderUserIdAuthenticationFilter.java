@@ -1,4 +1,4 @@
-package cn.codeyang.app.social;
+package cn.codeyang.app.social.login;
 
 import cn.codeyang.core.properties.SecurityConstant;
 import org.springframework.http.HttpMethod;

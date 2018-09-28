@@ -2,6 +2,7 @@ package cn.codeyang.core.social.github.config;
 
 import cn.codeyang.core.properties.SecurityConstant;
 import cn.codeyang.core.properties.YangSecurityProperties;
+import cn.codeyang.core.social.SocialAuthenticationFilterPostProcessor;
 import cn.codeyang.core.social.github.connection.GitHubConnectionFactory;
 import cn.codeyang.core.social.github.view.YangConnectView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,12 @@ public class SocialConfig implements SocialConfigurer {
     private YangSecurityProperties yangSecurityProperties;
     @Autowired
     private DataSource dataSource;
-    @Autowired
+    @Autowired(required = false)
     private ConnectionSignUp connectionSignUp;
+
+    @Autowired(required = false)
+    private SocialAuthenticationFilterPostProcessor socialAuthenticationFilterPostProcessor;
+
 
 
 
@@ -77,6 +82,8 @@ public class SocialConfig implements SocialConfigurer {
     public SpringSocialConfigurer springSocialConfigurer(){
         String filterProcessUrl = SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL;
         CustomSpringSocialConfigurer configurer = new CustomSpringSocialConfigurer(filterProcessUrl, yangSecurityProperties.getBrowser().getSignUpUrl());
+        configurer.signupUrl(yangSecurityProperties.getBrowser().getSignUpUrl());
+        configurer.setSocialAuthenticationFilterPostProcessor(socialAuthenticationFilterPostProcessor);
         return configurer;
     }
 
@@ -100,5 +107,7 @@ public class SocialConfig implements SocialConfigurer {
     public View gitHubConnectedView(){
         return new YangConnectView();
     }
+
+
 
 }

@@ -1,4 +1,4 @@
-package cn.codeyang.app.social;
+package cn.codeyang.app.social.login;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

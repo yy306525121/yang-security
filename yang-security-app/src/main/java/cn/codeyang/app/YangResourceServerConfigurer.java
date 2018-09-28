@@ -1,6 +1,6 @@
 package cn.codeyang.app;
 
-import cn.codeyang.app.social.ProviderUserIdAuthenticationSecurityConfig;
+import cn.codeyang.app.social.login.ProviderUserIdAuthenticationSecurityConfig;
 import cn.codeyang.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import cn.codeyang.core.properties.SecurityConstant;
 import cn.codeyang.core.properties.YangSecurityProperties;
@@ -12,6 +12,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.social.security.SpringSocialConfigurer;
+
+import javax.inject.Inject;
 
 @Configuration
 @EnableResourceServer
@@ -32,6 +35,9 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
     @Autowired
     private YangSecurityProperties yangSecurityProperties;
 
+    @Inject
+    private SpringSocialConfigurer springSocialConfigurer;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.formLogin()
@@ -47,6 +53,8 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
                 .and()
                 .apply(providerUserIdAuthenticationSecurityConfig)
                 .and()
+                .apply(springSocialConfigurer)
+                .and()
                 .authorizeRequests()
                 .antMatchers(
                         SecurityConstant.DEFAULT_UNAUTHENTICATION_URL,
@@ -56,7 +64,9 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
                         yangSecurityProperties.getBrowser().getSignUpUrl(),
                         yangSecurityProperties.getBrowser().getSignOutUrl(),
                         yangSecurityProperties.getBrowser().getSession().getSessionInvalidUrl(),
-                        "/user/register"
+                        yangSecurityProperties.getBrowser().getSignUpUrl(),
+                        yangSecurityProperties.getBrowser().getSignUpProcessUri(),
+                        SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL + "/*"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

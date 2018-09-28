@@ -29,8 +29,6 @@ public class YangAuthenticationSuccessHandler extends SavedRequestAwareAuthentic
     private ObjectMapper objectMapper;
 
     @Autowired
-    private YangSecurityProperties yangSecurityProperties;
-    @Autowired
     private ClientDetailsService clientDetailsService;
     @Autowired
     private AuthorizationServerTokenServices authorizationServerTokenServices;

@@ -32,7 +32,7 @@ public class DemoUserDetailsService implements UserDetailsService, SocialUserDet
 
     @Override
     public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
-        log.info("社交登陆用户名Id userId:{}", userId);
+        log.info("社交登陆用户名userId: {}", userId);
         if ("yangzhongyang".equals(userId)) {
             return new SocialUser("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
         } else if ("yy306525121".equals(userId)){

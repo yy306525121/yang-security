@@ -1,4 +1,4 @@
-package cn.codeyang.app.social;
+package cn.codeyang.app.social.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

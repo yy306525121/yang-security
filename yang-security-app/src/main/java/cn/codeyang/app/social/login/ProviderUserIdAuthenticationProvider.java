@@ -1,15 +1,12 @@
-package cn.codeyang.app.social;
+package cn.codeyang.app.social.login;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.social.UserIdSource;
 import org.springframework.social.connect.UsersConnectionRepository;
-import org.springframework.social.security.SocialUserDetails;
 import org.springframework.social.security.SocialUserDetailsService;
 
 import java.util.HashSet;
