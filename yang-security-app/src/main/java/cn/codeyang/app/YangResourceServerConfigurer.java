@@ -1,5 +1,6 @@
 package cn.codeyang.app;
 
+import cn.codeyang.app.social.ProviderUserIdAuthenticationSecurityConfig;
 import cn.codeyang.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
 import cn.codeyang.core.properties.SecurityConstant;
 import cn.codeyang.core.properties.YangSecurityProperties;
@@ -25,6 +26,8 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
     private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
     @Autowired
     private ValidateCodeSecurityConfig validateCodeSecurityConfig;
+    @Autowired
+    private ProviderUserIdAuthenticationSecurityConfig providerUserIdAuthenticationSecurityConfig;
 
     @Autowired
     private YangSecurityProperties yangSecurityProperties;
@@ -41,6 +44,8 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
                 .apply(smsCodeAuthenticationSecurityConfig)
                 .and()
                 .apply(validateCodeSecurityConfig)
+                .and()
+                .apply(providerUserIdAuthenticationSecurityConfig)
                 .and()
                 .authorizeRequests()
                 .antMatchers(

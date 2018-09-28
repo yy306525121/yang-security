@@ -17,7 +17,6 @@ public class YangAuthorizationServerConfig extends AuthorizationServerConfigurer
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
     //
     @Override

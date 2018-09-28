@@ -48,6 +48,20 @@ public class SecurityConstant {
 
     public static final String DEFAULT_SOCIAL_GITHUB_PROCESS_URL = "/login";
 
+    /**
+     * APP进行第三方登录时传递给后台的providerUserId参数名
+     */
+    public static final String DEFAULT_PARAMETER_NAME_PROVIDER_USER_ID = "providerUserId";
+
+    /**
+     * APP进行第三方登录时传递给后台的providerId参数名
+     */
+    public static final String DEFAULT_PARAMETER_NAME_PROVIDER_ID = "providerId";
+    /**
+     * APP进行第三方登录时请求后台处理的URL
+     */
+    public static final String DEFAULT_LOGIN_PROCESS_URL_PROVIDER_USER_ID = "/auth/providerUserId";
+
 
 
 }
