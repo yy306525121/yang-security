@@ -61,12 +61,12 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
                         SecurityConstant.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
                         SecurityConstant.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
                         yangSecurityProperties.getBrowser().getLoginPage(),
-                        yangSecurityProperties.getBrowser().getSignUpUrl(),
                         yangSecurityProperties.getBrowser().getSignOutUrl(),
                         yangSecurityProperties.getBrowser().getSession().getSessionInvalidUrl(),
                         yangSecurityProperties.getBrowser().getSignUpUrl(),
                         yangSecurityProperties.getBrowser().getSignUpProcessUri(),
-                        SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL + "/*"
+                        SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL + "/*",
+                        "/social/signUp"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

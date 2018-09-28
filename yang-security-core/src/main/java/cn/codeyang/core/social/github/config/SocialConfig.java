@@ -79,9 +79,12 @@ public class SocialConfig implements SocialConfigurer {
      * @return
      */
     @Bean
-    public SpringSocialConfigurer springSocialConfigurer(){
+    public SpringSocialConfigurer customSpringSocialConfigurer(){
         String filterProcessUrl = SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL;
+
+
         CustomSpringSocialConfigurer configurer = new CustomSpringSocialConfigurer(filterProcessUrl, yangSecurityProperties.getBrowser().getSignUpUrl());
+        //设置social需要注册的跳转地址
         configurer.signupUrl(yangSecurityProperties.getBrowser().getSignUpUrl());
         configurer.setSocialAuthenticationFilterPostProcessor(socialAuthenticationFilterPostProcessor);
         return configurer;

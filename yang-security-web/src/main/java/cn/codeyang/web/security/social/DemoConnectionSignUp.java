@@ -1,4 +1,4 @@
-package cn.codeyang.demo.security;
+package cn.codeyang.web.security.social;
 
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;

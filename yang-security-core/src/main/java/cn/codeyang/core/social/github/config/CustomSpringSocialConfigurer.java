@@ -39,4 +39,11 @@ public class CustomSpringSocialConfigurer extends SpringSocialConfigurer {
         this.socialAuthenticationFilterPostProcessor = socialAuthenticationFilterPostProcessor;
     }
 
+    public String getSignUpUrl() {
+        return signUpUrl;
+    }
+
+    public void setSignUpUrl(String signUpUrl) {
+        this.signUpUrl = signUpUrl;
+    }
 }

@@ -1,5 +1,6 @@
 package cn.codeyang.demo.web.controller;
 
+import cn.codeyang.app.social.AppSignUpUtils;
 import cn.codeyang.demo.domain.User;
 import cn.codeyang.demo.domain.UserQueryCondition;
 import cn.codeyang.demo.exception.UserNotExistException;
@@ -29,6 +30,8 @@ public class UserController {
 
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
+    @Autowired
+    private AppSignUpUtils appSignUpUtils;
 
     //@GetMapping("/me")
     //public Object getCurrentUser(Authentication authentication){
@@ -104,6 +107,7 @@ public class UserController {
         //TODO 注册用户
         log.info("User: {}", user.toString());
         String userId = user.getUsername();
-        providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
+//        providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
+        appSignUpUtils.doPostSignUp(new ServletWebRequest(request), userId);
     }
 }
