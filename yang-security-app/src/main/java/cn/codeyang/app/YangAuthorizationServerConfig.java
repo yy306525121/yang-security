@@ -55,6 +55,7 @@ public class YangAuthorizationServerConfig extends AuthorizationServerConfigurer
                         .withClient(client.getClientId())
                         .secret(passwordEncoder.encode(client.getClientSecret()))
                         .accessTokenValiditySeconds(client.getAccessTokenValiditySeconds())
+                        .refreshTokenValiditySeconds(2592000)
                         .authorizedGrantTypes("authorization_code", "password", "refresh_token")
                         .scopes("all", "read", "write");
             }
