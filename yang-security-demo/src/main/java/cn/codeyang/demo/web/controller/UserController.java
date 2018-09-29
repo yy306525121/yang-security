@@ -1,6 +1,6 @@
 package cn.codeyang.demo.web.controller;
 
-import cn.codeyang.app.social.AppSignUpUtils;
+//import cn.codeyang.app.social.AppSignUpUtils;
 import cn.codeyang.core.properties.YangSecurityProperties;
 import cn.codeyang.demo.domain.User;
 import cn.codeyang.demo.domain.UserQueryCondition;
@@ -36,8 +36,8 @@ public class UserController {
 
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
-    @Autowired
-    private AppSignUpUtils appSignUpUtils;
+//    @Autowired
+//    private AppSignUpUtils appSignUpUtils;
     @Autowired
     private YangSecurityProperties yangSecurityProperties;
 
@@ -47,10 +47,10 @@ public class UserController {
     //    return authentication;
     //}
 
-//    @GetMapping("/me")
-//    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user){
-//        return user;
-//    }
+    @GetMapping("/me")
+    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user){
+        return user;
+    }
 
     /**
      * 使用jwt之后session中存放的不再是UserDetails
@@ -58,16 +58,16 @@ public class UserController {
      * @param user
      * @return
      */
-    @GetMapping("/me")
-    public Object getCurrentUser(Authentication user, HttpServletRequest request) throws UnsupportedEncodingException {
-
-        String header = request.getHeader("Authorization");
-        String token = StringUtils.substringAfter(header, "bearer ");
-        Claims claims = Jwts.parser().setSigningKey(yangSecurityProperties.getOauth2().getJwtSigningKey().getBytes("UTF-8")).parseClaimsJws(token).getBody();
-        String company = (String) claims.get("company");
-        log.info("company: {}", company);
-        return user;
-    }
+//    @GetMapping("/me")
+//    public Object getCurrentUser(Authentication user, HttpServletRequest request) throws UnsupportedEncodingException {
+//
+//        String header = request.getHeader("Authorization");
+//        String token = StringUtils.substringAfter(header, "bearer ");
+//        Claims claims = Jwts.parser().setSigningKey(yangSecurityProperties.getOauth2().getJwtSigningKey().getBytes("UTF-8")).parseClaimsJws(token).getBody();
+//        String company = (String) claims.get("company");
+//        log.info("company: {}", company);
+//        return user;
+//    }
 
     @GetMapping()
     @JsonView(value = User.UserDetailView.class)
@@ -132,7 +132,7 @@ public class UserController {
         //TODO 注册用户
         log.info("User: {}", user.toString());
         String userId = user.getUsername();
-//        providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
-        appSignUpUtils.doPostSignUp(new ServletWebRequest(request), userId);
+        providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
+//        appSignUpUtils.doPostSignUp(new ServletWebRequest(request), userId);
     }
 }

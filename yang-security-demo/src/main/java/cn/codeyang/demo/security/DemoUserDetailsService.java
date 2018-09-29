@@ -23,9 +23,9 @@ public class DemoUserDetailsService implements UserDetailsService, SocialUserDet
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("表单登陆用户名 {}", username);
         if ("yangzhongyang".equals(username)) {
-            return new User("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+            return new User("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN,ROLE_USER"));
         } else if ("yy306525121".equals(username)){
-            return new User("yy306525121", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+            return new User("yy306525121", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
         }
         return null;
     }
@@ -34,9 +34,9 @@ public class DemoUserDetailsService implements UserDetailsService, SocialUserDet
     public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
         log.info("社交登陆用户名userId: {}", userId);
         if ("yangzhongyang".equals(userId)) {
-            return new SocialUser("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+            return new SocialUser("yangzhongyang", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN,ROLE_USER"));
         } else if ("yy306525121".equals(userId)){
-            return new SocialUser("yy306525121", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+            return new SocialUser("yy306525121", passwordEncoder.encode("hello"), true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
         }
         return null;
     }

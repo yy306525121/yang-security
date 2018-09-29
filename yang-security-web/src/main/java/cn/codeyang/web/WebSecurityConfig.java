@@ -102,6 +102,7 @@ public class WebSecurityConfig extends AbstractSecurityConfig {
                         yangSecurityProperties.getBrowser().getSignUpUrl(),
                         yangSecurityProperties.getBrowser().getSignUpProcessUri()
                         ).permitAll()
+                .antMatchers("/user/**").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
