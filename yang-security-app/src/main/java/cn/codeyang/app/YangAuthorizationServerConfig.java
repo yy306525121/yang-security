@@ -14,7 +14,14 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableAuthorizationServer
@@ -29,8 +36,14 @@ public class YangAuthorizationServerConfig extends AuthorizationServerConfigurer
     private UserDetailsService userDetailsService;
     @Autowired
     private YangSecurityProperties yangSecurityProperties;
+
     @Autowired
-    private TokenStore redisTokenStore;
+    private TokenStore tokenStore;
+
+    @Autowired(required = false)
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
+    @Autowired(required = false)
+    private TokenEnhancer jwtTokenEnhancer;
     //
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -54,7 +67,19 @@ public class YangAuthorizationServerConfig extends AuthorizationServerConfigurer
         endpoints
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService)
-                .tokenStore(redisTokenStore);
+                .tokenStore(tokenStore);
+
+        if (jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
+            TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+            List<TokenEnhancer> enhancers = new ArrayList<>();
+            enhancers.add(jwtTokenEnhancer);
+            enhancers.add(jwtAccessTokenConverter);
+            tokenEnhancerChain.setTokenEnhancers(enhancers);
+
+            endpoints
+                    .accessTokenConverter(jwtAccessTokenConverter)
+                    .tokenEnhancer(tokenEnhancerChain);
+        }
     }
 
 //@Override

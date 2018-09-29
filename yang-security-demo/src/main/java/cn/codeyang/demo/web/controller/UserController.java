@@ -1,15 +1,20 @@
 package cn.codeyang.demo.web.controller;
 
 import cn.codeyang.app.social.AppSignUpUtils;
+import cn.codeyang.core.properties.YangSecurityProperties;
 import cn.codeyang.demo.domain.User;
 import cn.codeyang.demo.domain.UserQueryCondition;
 import cn.codeyang.demo.exception.UserNotExistException;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.social.connect.web.ProviderSignInUtils;
@@ -20,6 +25,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +38,8 @@ public class UserController {
     private ProviderSignInUtils providerSignInUtils;
     @Autowired
     private AppSignUpUtils appSignUpUtils;
+    @Autowired
+    private YangSecurityProperties yangSecurityProperties;
 
     //@GetMapping("/me")
     //public Object getCurrentUser(Authentication authentication){
@@ -39,8 +47,25 @@ public class UserController {
     //    return authentication;
     //}
 
+//    @GetMapping("/me")
+//    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user){
+//        return user;
+//    }
+
+    /**
+     * 使用jwt之后session中存放的不再是UserDetails
+     *
+     * @param user
+     * @return
+     */
     @GetMapping("/me")
-    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user){
+    public Object getCurrentUser(Authentication user, HttpServletRequest request) throws UnsupportedEncodingException {
+
+        String header = request.getHeader("Authorization");
+        String token = StringUtils.substringAfter(header, "bearer ");
+        Claims claims = Jwts.parser().setSigningKey(yangSecurityProperties.getOauth2().getJwtSigningKey().getBytes("UTF-8")).parseClaimsJws(token).getBody();
+        String company = (String) claims.get("company");
+        log.info("company: {}", company);
         return user;
     }
 
