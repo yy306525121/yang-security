@@ -27,6 +27,7 @@ public class SpringSocialConfigurerPostProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (StringUtils.equals(beanName, "customSpringSocialConfigurer")) {
             CustomSpringSocialConfigurer configurer = (CustomSpringSocialConfigurer) bean;
+            configurer.signupUrl("/social/signUp");
             configurer.setSignUpUrl("/social/signUp");
             return configurer;
         }
