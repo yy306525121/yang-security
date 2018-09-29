@@ -82,9 +82,4 @@ public class YangAuthorizationServerConfig extends AuthorizationServerConfigurer
                     .tokenEnhancer(tokenEnhancerChain);
         }
     }
-
-//@Override
-    //public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-    //    security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
-    //}
 }
