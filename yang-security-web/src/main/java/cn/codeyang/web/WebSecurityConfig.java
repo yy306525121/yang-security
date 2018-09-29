@@ -2,6 +2,7 @@ package cn.codeyang.web;
 
 import cn.codeyang.core.authentication.AbstractSecurityConfig;
 import cn.codeyang.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
+import cn.codeyang.core.authroize.AuthorizeConfigManager;
 import cn.codeyang.core.properties.SecurityConstant;
 import cn.codeyang.core.properties.YangSecurityProperties;
 import cn.codeyang.core.validate.code.ValidateCodeSecurityConfig;
@@ -51,6 +52,8 @@ public class WebSecurityConfig extends AbstractSecurityConfig {
     @Inject
     private SpringSocialConfigurer springSocialConfigurer;
 
+    @Autowired
+    private AuthorizeConfigManager authorizeConfigManager;
 
     @Bean
     public PersistentTokenRepository persistentTokenRepository() {
@@ -90,27 +93,27 @@ public class WebSecurityConfig extends AbstractSecurityConfig {
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .deleteCookies("JSESSIONID")
                 .and()
-                .authorizeRequests()
-                .antMatchers(
-                        SecurityConstant.DEFAULT_UNAUTHENTICATION_URL,
-                        SecurityConstant.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
-                        yangSecurityProperties.getBrowser().getLoginPage(),
-                        SecurityConstant.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
-                        SecurityConstant.DEFAULT_SESSION_INVALID_URL,
-                        yangSecurityProperties.getBrowser().getSignOutUrl(),
-                        SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL + "/*",
-                        yangSecurityProperties.getBrowser().getSignUpUrl(),
-                        yangSecurityProperties.getBrowser().getSignUpProcessUri()
-                        ).permitAll()
-                .antMatchers("/user/**").hasRole("ADMIN")
-                .anyRequest()
-                .authenticated()
-                .and()
+//                .authorizeRequests()
+//                .antMatchers(
+//                        SecurityConstant.DEFAULT_UNAUTHENTICATION_URL,
+//                        SecurityConstant.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
+//                        yangSecurityProperties.getBrowser().getLoginPage(),
+//                        SecurityConstant.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
+//                        SecurityConstant.DEFAULT_SESSION_INVALID_URL,
+//                        yangSecurityProperties.getBrowser().getSignOutUrl(),
+//                        SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL + "/*",
+//                        yangSecurityProperties.getBrowser().getSignUpUrl(),
+//                        yangSecurityProperties.getBrowser().getSignUpProcessUri()
+//                        ).permitAll()
+//                .antMatchers("/user/**").hasRole("ADMIN")
+//                //
+//                .antMatchers("/admin/**").access("hasRole('ADMIN') and hasIpAddress('192.168.1.115')")
+//                .anyRequest()
+//                .authenticated()
+//                .and()
                 .csrf().disable();
+
+        authorizeConfigManager.config(http.authorizeRequests());
     }
-
-
-
-
 
 }

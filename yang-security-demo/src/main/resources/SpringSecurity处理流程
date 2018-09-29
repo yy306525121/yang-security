@@ -1,0 +1,21 @@
+FilterSecurityInterceptor.doFilter
+  -->new FilterInvocation(request, response, chain);
+  -->this.invoke(fi); //这里会先判断之前是否走过这个方法，
+    -->fi.getRequest().setAttribute("__spring_security_filterSecurityInterceptor_filterApplied", Boolean.TRUE); //标记已经走过invoke这段代码
+    -->super.beforeInvocation(fi); //开始 处理整合授权逻辑
+      -->AbstractSecurityInterceptor.beforeInvocation(Object object)
+        -->this.obtainSecurityMetadataSource().getAttributes(object);  //这里会遍历所有的路径configAttribute 并查询当前路径所需要的权限
+        -->this.authenticateIfRequired();
+          -->SecurityContextHolder.getContext().getAuthentication(); //取出当前的authentication
+        -->this.accessDecisionManager.decide(authenticated, object, attributes);  //将ConfigAttribute和Authentication封装起来传递给AccessDecisionManager, 然后决定是否通过
+          -->AffirmativeBased.decide  //此处有三种策略器:  AffirmativeBased 只要有一种策略器投不通过最终结果为不通过
+            -->getDecisionVoters() //获取所有的投票策略器  //spring3之后只剩下一种WebExpressionVoter
+            -->voter.vote(authentication, object, configAttributes); //调用策略器开始投票
+            -->throw new AccessDeniedException(messages.getMessage(
+               					"AbstractAccessDecisionManager.accessDenied", "Access is denied")); //如果投票不通过， 抛异
+ExceptionTranslationFilter.doFilter
+  -->(AuthenticationException) throwableAnalyzer
+     					.getFirstThrowableOfType(AuthenticationException.class, causeChain); //判断抛出的异常是否是AuthenticationException
+  -->(AccessDeniedException) throwableAnalyzer.getFirstThrowableOfType(
+     						AccessDeniedException.class, causeChain); //判断是否是AccessDeniedException
+  -->handleSpringSecurityException(request, response, chain, ase);  //这里会取出当前Authentication， 并判断如果是因为未登录而抛的异常就跳转到配置的loginPage登陆页面， 如果是因为当前用户没有权限报异常就报403异常

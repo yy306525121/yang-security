@@ -2,6 +2,7 @@ package cn.codeyang.app;
 
 import cn.codeyang.app.social.login.ProviderUserIdAuthenticationSecurityConfig;
 import cn.codeyang.core.authentication.mobile.SmsCodeAuthenticationSecurityConfig;
+import cn.codeyang.core.authroize.AuthorizeConfigManager;
 import cn.codeyang.core.properties.SecurityConstant;
 import cn.codeyang.core.properties.YangSecurityProperties;
 import cn.codeyang.core.validate.code.ValidateCodeSecurityConfig;
@@ -38,6 +39,9 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
     @Inject
     private SpringSocialConfigurer springSocialConfigurer;
 
+    @Autowired
+    private AuthorizeConfigManager authorizeConfigManager;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.formLogin()
@@ -55,23 +59,24 @@ public class YangResourceServerConfigurer extends ResourceServerConfigurerAdapte
                 .and()
                 .apply(springSocialConfigurer)
                 .and()
-                .authorizeRequests()
-                .antMatchers(
-                        SecurityConstant.DEFAULT_UNAUTHENTICATION_URL,
-                        SecurityConstant.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
-                        SecurityConstant.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
-                        yangSecurityProperties.getBrowser().getLoginPage(),
-                        yangSecurityProperties.getBrowser().getSignOutUrl(),
-                        yangSecurityProperties.getBrowser().getSession().getSessionInvalidUrl(),
-                        yangSecurityProperties.getBrowser().getSignUpUrl(),
-                        yangSecurityProperties.getBrowser().getSignUpProcessUri(),
-                        SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL + "/*",
-                        "/social/signUp"
-                ).permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
+//                .authorizeRequests()
+//                .antMatchers(
+//                        SecurityConstant.DEFAULT_UNAUTHENTICATION_URL,
+//                        SecurityConstant.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
+//                        SecurityConstant.DEFAULT_VALIDATE_CODE_URL_PREFIX + "/*",
+//                        yangSecurityProperties.getBrowser().getLoginPage(),
+//                        yangSecurityProperties.getBrowser().getSignOutUrl(),
+//                        yangSecurityProperties.getBrowser().getSession().getSessionInvalidUrl(),
+//                        yangSecurityProperties.getBrowser().getSignUpUrl(),
+//                        yangSecurityProperties.getBrowser().getSignUpProcessUri(),
+//                        SecurityConstant.DEFAULT_SOCIAL_GITHUB_PROCESS_URL + "/*",
+//                        "/social/signUp"
+//                ).permitAll()
+//                .anyRequest()
+//                .authenticated()
+//                .and()
                 .csrf().disable();
 
+        authorizeConfigManager.config(http.authorizeRequests());
     }
 }

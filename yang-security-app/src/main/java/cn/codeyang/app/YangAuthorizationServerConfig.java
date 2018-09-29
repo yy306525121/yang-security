@@ -20,7 +20,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -32,7 +31,6 @@ public class YangAuthorizationServerConfig extends AuthorizationServerConfigurer
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    @Qualifier("demoUserDetailsService")
     private UserDetailsService userDetailsService;
     @Autowired
     private YangSecurityProperties yangSecurityProperties;
