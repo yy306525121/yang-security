@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SpringBootApplication(scanBasePackages = {"cn.codeyang.web", "cn.codeyang.demo", "cn.codeyang.core", "cn.codeyang.app"})
+@SpringBootApplication(scanBasePackages = {"cn.codeyang.web", "cn.codeyang.demo", "cn.codeyang.core", "cn.codeyang.app", "cn.codeyang.authorize"})
 @RestController
 @EnableSwagger2
 public class YangSecurityDemoApplication {

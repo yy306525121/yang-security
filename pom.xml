@@ -24,6 +24,7 @@
         <module>yang-security-app</module>
         <module>yang-security-web</module>
         <module>yang-security-demo</module>
+        <module>yang-security-authorize</module>
     </modules>
 
     <properties>

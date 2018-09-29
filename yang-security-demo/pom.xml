@@ -34,6 +34,12 @@
 			<!--<version>${yang.security.version}</version>-->
 		<!--</dependency>-->
 
+
+		<dependency>
+			<groupId>cn.codeyang</groupId>
+			<artifactId>yang-security-authorize</artifactId>
+			<version>${yang.security.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>

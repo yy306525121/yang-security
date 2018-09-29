@@ -3,11 +3,13 @@ package cn.codeyang.core.authroize;
 import cn.codeyang.core.properties.SecurityConstant;
 import cn.codeyang.core.properties.YangSecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(Integer.MIN_VALUE)
 public class AuthorizeConfigProviderImpl implements AuthorizeConfigProvider {
 
     @Autowired
